@@ -4,14 +4,14 @@ defmodule ETSDB do
   """
 
   def get(id) do
-    with {:ok, ref} <- get_db_ref,
+    with {:ok, ref} <- get_db_ref(),
          [{_, data}] <- :ets.lookup(ref, id) do
       {:ok, data}
     end
   end
 
   def query(query) do
-    with {:ok, ref} <- get_db_ref do
+    with {:ok, ref} <- get_db_ref() do
       :ets.match(ref, query)
       |> Enum.reduce([], fn [ele], acc -> [ele | acc] end)
     end
@@ -24,14 +24,14 @@ defmodule ETSDB do
 
   def insert(data) do
     GenServer.cast(ETSDB.Persist, {:persist, :insert})
-    GenServer.call(ETSDB.DB, {:insert, data)
+    GenServer.call(ETSDB.DB, {:insert, data})
   end
 
   # Private fn
 
-  defp get_db_ref(db) do
+  defp get_db_ref do
     with nil <- Application.get_env(:etsdb, :db),
-         :undefined <- :ets.whereis(db) do
+         :undefined <- :ets.whereis(:etsdb) do
       {:error, :db}
     else
       ref -> {:ok, ref}

@@ -22,7 +22,7 @@ defmodule ETSDB.Persist do
 
   @doc false
   @impl true
-  def init(_), do: {:ok, {Process.monitor(Alien.ETSDB), %State{lock: false}}}
+  def init(_), do: {:ok, {Process.monitor(ETSDB.DB), %State{lock: false}}}
 
   @doc false
   @impl true
@@ -41,7 +41,7 @@ defmodule ETSDB.Persist do
   def handle_info({:diff, diff}, {ref, state} = status) do
     case state do
       ^diff ->
-        with {:error, _} <- GenServer.call(ETSDB, :persist), do: Logger.error("ETSDB failed persist to file") 
+        with {:error, _} <- GenServer.call(ETSDB.DB, :persist), do: Logger.error("ETSDB failed persist to file") 
         {:noreply, {ref, %State{lock: false}}}
       _ ->
         Process.send_after(self(), {:diff, state}, 5_000)
@@ -56,7 +56,7 @@ defmodule ETSDB.Persist do
     # waiting 1 sec
     Process.sleep(1000)
     {:noreply,
-     {Process.monitor(Alien.ETSDB), %State{lock: false}}}
+     {Process.monitor(ETSDB.DB), %State{lock: false}}}
   end
 
   @doc false

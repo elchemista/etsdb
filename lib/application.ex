@@ -12,7 +12,7 @@ defmodule ETSDB.Application do
       # maybe considering to start another procces to backup etsdb using 
       # {heir,Pid,HeirData} config on :ets when proccess crash
       worker(ETSDB.DB, []),
-      worker(ETSDB.Observer, [])
+      worker(ETSDB.Persist, [])
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: ETSDB.Supervisor)
