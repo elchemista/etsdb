@@ -3,7 +3,7 @@
 ### Under development! 
 
 Very simple ets db with persistence on file.
-
+`use ETSDB, config: [:set, :protected, {:read_concurrency, true}]`
 
 Absolute path where db file will be saved.
 `config :etsdb, filename: "/tmp/ets_db"`
